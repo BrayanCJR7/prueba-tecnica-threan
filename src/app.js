@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import DataTable from 'react-data-table-component'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const columnas = [
     {
@@ -95,36 +98,41 @@ const columnas = [
     }
 ]
 
-const data={
-    labels:[],
-    datasets: [
-        {
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-          ],
-          borderWidth: 1,
-          data:[]
-        }]
-}
+
 const App = () => {
     const [covidcasos, setCovidcasos] = useState([]);
     const [tabla, setTabla] = useState([]);
     const [busqueda, setBusqueda] = useState([]);
+
+    /* Graficos */
+    const [ciudades, setCiudades] = useState([]);
+    const data = {
+        labels: ciudades,
+        datasets: [
+            {
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                ],
+                borderWidth: 3,
+                data: [20, 70, 30, 40]
+            }]
+    }
+    /* const [busqueda, setBusqueda] = useState([]); */
 
     const inicialUrl = 'https://www.datos.gov.co/resource/gt2j-8ykr.json';
     const fetchApi = async () => {
@@ -132,6 +140,12 @@ const App = () => {
         const data = await response.json()
         setCovidcasos(data)
         setTabla(data)
+
+        var auxCiudades = []
+        data.map(elemento => {
+            auxCiudades.push(elemento.ciudades)
+        })
+        setCiudades(auxCiudades);
     }
 
     const handleChange = e => {
@@ -171,7 +185,8 @@ const App = () => {
                     onChange={handleChange}
                 />
             </div>
-            <Pie data={data} />;
+            <Pie
+                data={data} />;
         </div>
     )
 }
