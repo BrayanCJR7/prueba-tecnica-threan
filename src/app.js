@@ -98,7 +98,6 @@ const columnas = [
     }
 ]
 
-
 const App = () => {
     const [covidcasos, setCovidcasos] = useState([]);
     const [tabla, setTabla] = useState([]);
@@ -107,7 +106,7 @@ const App = () => {
     /* Graficos */
     const [ciudades, setCiudades] = useState([]);
     const data = {
-        labels: ciudades,
+        labels: ciudades.map(x => x.departamento_nom),
         datasets: [
             {
                 label: '# of Votes',
@@ -132,20 +131,15 @@ const App = () => {
                 data: [20, 70, 30, 40]
             }]
     }
-    /* const [busqueda, setBusqueda] = useState([]); */
 
     const inicialUrl = 'https://www.datos.gov.co/resource/gt2j-8ykr.json';
     const fetchApi = async () => {
         const response = await fetch(inicialUrl)
         const data = await response.json()
+        console.log(data)
         setCovidcasos(data)
         setTabla(data)
-
-        var auxCiudades = []
-        data.map(elemento => {
-            auxCiudades.push(elemento.ciudades)
-        })
-        setCiudades(auxCiudades);
+        setCiudades(data)
     }
 
     const handleChange = e => {
