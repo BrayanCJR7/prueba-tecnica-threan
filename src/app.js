@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import './app.css'
 import DataTable from 'react-data-table-component'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
@@ -105,12 +106,22 @@ const App = () => {
 
     /* Graficos */
     const [ciudades, setCiudades] = useState([]);
+    /* Mostrar sin repetir las ciudades */
+    let unic = [... new Set(ciudades.map(x => x.departamento_nom))];
+    /* Contando el numero de casos por ciudad */
+    const res = ciudades.reduce((acc, next, index) => {
+        return {
+            ...acc,
+            [next.departamento_nom]: (acc[next.departamento_nom] || 0) + 1
+        }
+    }, {})
+    
     const data = {
-        labels: ciudades.map(x => x.departamento_nom),
+        labels: unic,
         datasets: [
             {
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                label: 'Ciudades',
+                data: Object.keys(res).map(name => res[name]),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -127,8 +138,7 @@ const App = () => {
                     'rgba(153, 102, 255, 1)',
                     'rgba(255, 159, 64, 1)',
                 ],
-                borderWidth: 3,
-                data: [20, 70, 30, 40]
+                borderWidth: 3
             }]
     }
 
@@ -136,7 +146,7 @@ const App = () => {
     const fetchApi = async () => {
         const response = await fetch(inicialUrl)
         const data = await response.json()
-        console.log(data)
+        console.log(data.length)
         setCovidcasos(data)
         setTabla(data)
         setCiudades(data)
@@ -163,13 +173,13 @@ const App = () => {
     }, [])
     return (
         <div className="App">
-            <DataTable
+            <DataTable className="table"
                 columns={columnas}
                 data={covidcasos}
                 title='Casos COVID'
                 pagination
             />
-            <div className="input-group mb-3">
+            <div className="input-group mb-3 busqueda">
                 <span className="input-group-text" id="basic-addon2">Buscar por departamento o ciudad</span>
                 <input
                     type="text"
@@ -179,8 +189,10 @@ const App = () => {
                     onChange={handleChange}
                 />
             </div>
-            <Pie
-                data={data} />;
+            <div className="grafico">
+                <Pie
+                    data={data} />;
+            </div>
         </div>
     )
 }

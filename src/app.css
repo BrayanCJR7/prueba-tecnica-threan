@@ -1,0 +1,14 @@
+.App {
+    margin-top: 2em;
+}
+
+.App,
+.busqueda,
+.grafico {
+    margin: 0 auto;
+    width: 80%;
+}
+
+.busqueda {
+    margin-bottom: 2em;
+}
